@@ -13,7 +13,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 @Service
 public class AWSS3ServiceImpl implements AWSS3Service {
@@ -34,13 +33,15 @@ public class AWSS3ServiceImpl implements AWSS3Service {
             amazonS3.putObject(request);
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            mainFile.delete();
         }
     }
 
     @Override
     public byte[] downloadFile(String key) {
-        S3Object object = amazonS3.getObject(bucketName,key);
-        S3ObjectInputStream inputStream= object.getObjectContent();
+        S3Object object = amazonS3.getObject(bucketName, key);
+        S3ObjectInputStream inputStream = object.getObjectContent();
         try {
             return IOUtils.toByteArray(inputStream);
         } catch (IOException e) {
@@ -48,4 +49,6 @@ public class AWSS3ServiceImpl implements AWSS3Service {
         }
         return null;
     }
+
+
 }
